@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include <algorithm>
 
 using namespace std;
@@ -14,12 +15,27 @@ bool IsPalindrom (string str) {
     return str == copy_str;
 }
 
+vector<string> PalindromFilter (vector<string> words, int minLength) {
+    vector<string> filtered_words;
+
+    for (auto word : words) {
+        if (word.length() < minLength || !IsPalindrom(word))
+            continue;
+
+        filtered_words.push_back(word);
+    }
+
+    return filtered_words;
+}
+
 int main() {
-    string a;
+    vector<string> a_vector = {"weew", "bro", "code"};
+    int length = 4;
 
-    cin >> a;
+    vector<string> filter_a = PalindromFilter(a_vector, length);
 
-    cout << IsPalindrom(a) << endl;
+    for (auto a : filter_a)
+        cout << a << " ";
 
     return 0;
 }
