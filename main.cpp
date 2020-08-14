@@ -33,24 +33,38 @@ string JoinReverse (const vector<string>& v_str) {
 
 class Person {
 public:
+    Person(string first_name, string last_name, unsigned int birthday) {
+        this->full_name_of_year[birthday] = { first_name, last_name };
+        this->birthday = birthday;
+    }
+
     void ChangeFirstName(int year, const string& first_name) {
-        if (full_name_of_year.count(year) == 0)
-            full_name_of_year[year] = { first_name, "" };
+        if (year < this->birthday)
+            return;
+
+        if (this->full_name_of_year.count(year) == 0)
+            this->full_name_of_year[year] = { first_name, "" };
         else
-            full_name_of_year[year].first_name = first_name;
+            this->full_name_of_year[year].first_name = first_name;
     }
 
     void ChangeLastName(int year, const string& last_name) {
-        if (full_name_of_year.count(year) == 0)
-            full_name_of_year[year] = { "", last_name };
+        if (year < this->birthday)
+            return;
+
+        if (this->full_name_of_year.count(year) == 0)
+            this->full_name_of_year[year] = { "", last_name };
         else
-            full_name_of_year[year].last_name = last_name;
+            this->full_name_of_year[year].last_name = last_name;
     }
 
-    string GetFullName(int year) {
+    string GetFullName(int year) const {
+        if (year < this->birthday)
+            return "No person";
+
         FullName current_name = { "", "" };
 
-        for (const auto& [key, value] : full_name_of_year) {
+        for (const auto& [key, value] : this->full_name_of_year) {
             if (key > year)
                 break;
 
@@ -64,10 +78,13 @@ public:
         return PrintFullName({ current_name.first_name }, { current_name.last_name });
     }
 
-    string GetFullNameWithHistory(int year) {
+    string GetFullNameWithHistory(int year) const {
+        if (year < this->birthday)
+            return "No person";
+
         vector<string> first_names, last_names;
 
-        for (const auto& [key, value] : full_name_of_year) {
+        for (const auto& [key, value] : this->full_name_of_year) {
             if (key > year)
                 break;
 
@@ -83,8 +100,9 @@ public:
 
 private:
     map<int, FullName> full_name_of_year;
+    int birthday;
 
-    string PrintFullName (const vector<string>& first_names = {}, const vector<string>& last_names = {}) {
+    string PrintFullName (const vector<string>& first_names = {}, const vector<string>& last_names = {}) const {
         bool is_empty_first_name = first_names.empty() || (first_names.size() == 1 && first_names[0].empty());
         bool is_empty_last_name = last_names.empty() || (last_names.size() == 1 && last_names[0].empty());
 
@@ -104,38 +122,16 @@ private:
 };
 
 int main() {
-    Person person;
-
-    person.ChangeFirstName(1965, "Polina");
-    person.ChangeLastName(1967, "Sergeeva");
-    for (int year : {1900, 1965, 1990}) {
+    Person person("Polina", "Sergeeva", 1960);
+    for (int year : {1959, 1960}) {
         cout << person.GetFullNameWithHistory(year) << endl;
     }
 
-    person.ChangeFirstName(1970, "Appolinaria");
-    for (int year : {1969, 1970}) {
+    person.ChangeFirstName(1965, "Appolinaria");
+    person.ChangeLastName(1967, "Ivanova");
+    for (int year : {1965, 1967}) {
         cout << person.GetFullNameWithHistory(year) << endl;
     }
-
-    person.ChangeLastName(1968, "Volkova");
-    for (int year : {1969, 1970}) {
-        cout << person.GetFullNameWithHistory(year) << endl;
-    }
-
-    person.ChangeFirstName(1990, "Polina");
-    person.ChangeLastName(1990, "Volkova-Sergeeva");
-    cout << person.GetFullNameWithHistory(1990) << endl;
-
-    person.ChangeFirstName(1966, "Pauline");
-    cout << person.GetFullNameWithHistory(1966) << endl;
-
-    person.ChangeLastName(1960, "Sergeeva");
-    for (int year : {1960, 1967}) {
-        cout << person.GetFullNameWithHistory(year) << endl;
-    }
-
-    person.ChangeLastName(1961, "Ivanova");
-    cout << person.GetFullNameWithHistory(1967) << endl;
 
     return 0;
 }
