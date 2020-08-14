@@ -85,15 +85,18 @@ private:
     map<int, FullName> full_name_of_year;
 
     string PrintFullName (const vector<string>& first_names = {}, const vector<string>& last_names = {}) {
-        if (first_names.empty() && last_names.empty())
+        bool is_empty_first_name = first_names.empty() || (first_names.size() == 1 && first_names[0].empty());
+        bool is_empty_last_name = last_names.empty() || (last_names.size() == 1 && last_names[0].empty());
+
+        if (is_empty_first_name && is_empty_last_name)
             return "Incognito";
 
         string history_first_names = JoinReverse(first_names), history_last_names = JoinReverse(last_names);
 
-        if (last_names.empty())
+        if (is_empty_last_name)
             return history_first_names + " with unknown last name";
 
-        if (first_names.empty())
+        if (is_empty_first_name)
             return history_last_names + " with unknown first name";
 
         return history_first_names + " " + history_last_names;
