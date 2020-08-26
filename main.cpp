@@ -42,7 +42,7 @@ public:
             this->denominator = 1;
 
         if (this->denominator == 0)
-            throw invalid_argument("Denominator can't be 0");
+            throw runtime_error("Invalid argument");
     };
 
     int Numerator() const {
@@ -74,7 +74,7 @@ Rational operator/ (const Rational& lhs, const Rational& rhs) {
     int denom = lhs.Denominator() * rhs.Numerator();
 
     if (denom == 0)
-        throw domain_error("Denominator can't be 0");
+        throw runtime_error("Division by zero");
 
     return {lhs.Numerator() * rhs.Denominator(), denom};
 }
@@ -101,25 +101,36 @@ istream& operator>> (istream& stream, Rational& num) {
 
     if (stream)
         num = Rational(a, b);
+    else
+        throw runtime_error("Invalid argument");
 
     return stream;
 };
 
 int main() {
-    try {
-        Rational r(1, 0);
-        cout << "Doesn't throw in case of zero denominator" << endl;
-        return 1;
-    } catch (invalid_argument&) {
-    }
+    Rational rat1, rat2;
+    char act;
 
     try {
-        auto x = Rational(1, 2) / Rational(0, 1);
-        cout << "Doesn't throw in case of division by zero" << endl;
-        return 2;
-    } catch (domain_error&) {
+        cin >> rat1 >> act >> rat2;
+
+        switch (act) {
+            case '+' :
+                cout << rat1 + rat2;
+                break;
+            case '-' :
+                cout << rat1 - rat2;
+                break;
+            case '/' :
+                cout << rat1 / rat2;
+                break;
+            case '*' :
+                cout << rat1 * rat2;
+                break;
+        }
+    } catch (runtime_error& ex) {
+        cout << ex.what();
     }
 
-    cout << "OK" << endl;
     return 0;
 }
