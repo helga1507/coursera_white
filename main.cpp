@@ -16,6 +16,12 @@ const string COMMAND_PRINT = "Print";
 class Date {
 public:
     Date (int new_year, int new_month, int new_day) {
+        if (new_month < 1 || new_month > 12)
+            throw logic_error("Month value is invalid: " + to_string(month));
+
+        if (day < 1 || day > 31)
+            throw logic_error("Day value is invalid: " + to_string(day));
+
         this->year = new_year;
         this->month = new_month;
         this->day = new_day;
@@ -105,14 +111,7 @@ Date parseDate (const string& str_date) {
     ss >> year >> sep >> month >> sep2 >> day;
 
     if (!ss || sep != SEPARATOR_DATE || sep2 != SEPARATOR_DATE || ss.rdbuf()->in_avail() != 0)
-        error_str = "Wrong date format: " + str_date;
-    else if (month < 1 || month > 12)
-        error_str = "Month value is invalid: " + to_string(month);
-    else if (day < 1 || day > 31)
-        error_str = "Day value is invalid: " + to_string(day);
-
-    if (!error_str.empty())
-        throw runtime_error(error_str);
+        throw runtime_error("Wrong date format: " + str_date);
 
     return { year, month, day };
 }
